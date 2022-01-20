@@ -8,6 +8,7 @@ import { getRoomInfo, joinRoom, removeSubscriber,
 import PublishVideo from "./PublishVideo";
 import SubscribeVideo from "./SubscribeVideo";
 import Chatting from "./Chatting";
+import moment from "moment";
 
 let myroom = 5678; // demo room
 let storePlugin = null;
@@ -17,7 +18,7 @@ let myserver = "http://" + window.location.hostname + ":8088/janus";
 const VideoComponent = (props) => {
   const dispatch = useDispatch();
   const {publishFeed, subscribeFeeds,
-         onoffVideo, onoffAudio} = useSelector((state) => state.roomReducer);
+         onoffVideo, onoffAudio, chatData} = useSelector((state) => state.roomReducer);
 
   useEffect(() => {
     dispatch(getRoomInfo({room: myroom, server: myserver}))
@@ -370,13 +371,10 @@ const VideoComponent = (props) => {
             
             if (what === "message") {
               // public message
-              let display = json["display"];
-              let text = json["text"];
-
               dispatch(receiveChat({
-                display: display,
-                text: text,
-                time: new Date()
+                display: json["display"],
+                text: json["text"],
+                time: moment().format("HH:mm")
               }));
             } else if (what === "file") {
               // let from = json["display"];
@@ -427,7 +425,8 @@ const VideoComponent = (props) => {
   }, [])
 
   useEffect(() => {
-  }, [subscribeFeeds])
+    console.log(chatData);
+  }, [subscribeFeeds, chatData])
 
   const handleAudioActiveClick = () => {
     if (!onoffAudio) storePlugin.unmuteAudio();
@@ -449,7 +448,7 @@ const VideoComponent = (props) => {
     <>
           <div
             style={{
-              width: "100px",
+              width: "100%",
               height: "100px",
               display: "flex",
               margin: "3px",

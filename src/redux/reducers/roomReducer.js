@@ -135,7 +135,7 @@ const roomReducer = (state = initialState, action) =>
                                       time: action.payload.time })
                 break;
 
-            case SEND_CHAT:
+            case RECEIVE_CHAT:
                 draft.chatData.push({ text: action.payload.text, display: action.payload.display,
                                         time: action.payload.time })
                 break;

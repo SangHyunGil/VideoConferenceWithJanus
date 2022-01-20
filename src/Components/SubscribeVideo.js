@@ -6,15 +6,7 @@ const SubscribeVideo = () => {
 
     const renderRemoteVideos = subscribeFeeds.map((feed) => {
         return (
-          <div
-            key={feed.id}
-            style={{
-              width: "100px",
-              height: "100px",
-              float: "left",
-              margin: "3px",
-            }}
-          >
+          <div>
             <Video
               stream={feed.stream}
               username={feed.display}
