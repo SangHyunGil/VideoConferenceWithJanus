@@ -9,6 +9,7 @@ const initialState = {
     useVideo: true,
     onoffVideo: true,
     onoffAudio: true,
+    onoffScreenSharing: false,
     publishFeed: {},
     subscribeFeeds: [],
     chatData: []
@@ -26,6 +27,7 @@ export const TOGGLE_VIDEO = "TOGGLE_VIDEO";
 export const TOGGLE_AUDIO = "TOGGLE_AUDIO";
 export const SEND_CHAT = "SEND_CHAT";
 export const RECEIVE_CHAT = "RECEIVE_CHAT";
+export const TOGGLE_SCREEN_SHARING = "TOGGLE_SCREEN_SHARING";
 
 // actionCreator
 export const getRoomInfo = (payload) => ({
@@ -83,6 +85,10 @@ export const receiveChat = (payload) => ({
     payload
 });
 
+export const toggleScreenSharing = (payload) => ({
+    type: TOGGLE_SCREEN_SHARING,
+    payload
+});
 
 // reducer
 const roomReducer = (state = initialState, action) =>
@@ -141,6 +147,7 @@ const roomReducer = (state = initialState, action) =>
                 break;
 
             default:
+                draft.onoffScreenSharing = !draft.onoffScreenSharing;
                 break;
         }
     }

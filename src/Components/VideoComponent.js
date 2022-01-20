@@ -1,10 +1,10 @@
-import { Janus } from "janusjs-sdk";
+import Janus from "../utils/janus";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import hark from "hark";
 import { getRoomInfo, joinRoom, removeSubscriber,
    subscribeFeed, addPublishStream, addSubscribeStream,
-   toggleVideo, toggleAudio, receiveChat} from "../redux/reducers/roomReducer";
+   toggleVideo, toggleAudio, receiveChat, toggleScreenSharing} from "../redux/reducers/roomReducer";
 import PublishVideo from "./PublishVideo";
 import SubscribeVideo from "./SubscribeVideo";
 import Chatting from "./Chatting";
@@ -18,7 +18,8 @@ let myserver = "http://" + window.location.hostname + ":8088/janus";
 const VideoComponent = (props) => {
   const dispatch = useDispatch();
   const {publishFeed, subscribeFeeds,
-         onoffVideo, onoffAudio, chatData} = useSelector((state) => state.roomReducer);
+         onoffVideo, onoffAudio, onoffScreenSharing,
+         chatData} = useSelector((state) => state.roomReducer);
 
   useEffect(() => {
     dispatch(getRoomInfo({room: myroom, server: myserver}))
@@ -428,7 +429,7 @@ const VideoComponent = (props) => {
     console.log(chatData);
   }, [subscribeFeeds, chatData])
 
-  const handleAudioActiveClick = () => {
+  const toggleAudioHandler = () => {
     if (!onoffAudio) storePlugin.unmuteAudio();
     else storePlugin.muteAudio();
     dispatch(toggleAudio({
@@ -436,13 +437,54 @@ const VideoComponent = (props) => {
     }));
   };
 
-  const handleVideoActiveClick = () => {
+  const toggleVideoHandler = () => {
     if (!onoffVideo) storePlugin.unmuteVideo();
     else storePlugin.muteVideo();
     dispatch(toggleVideo({
       onoffVideo: !onoffVideo
     }));
   };
+
+  const toggleScreenSharingHandler = () => {
+    if (onoffScreenSharing) {
+      console.log("scrrrrrrrrrrrr");
+      storePlugin.createOffer({
+        media: {
+          video: "screen",
+          replaceVideo: true
+        },
+        success: function (jsep) {
+          dispatch(toggleScreenSharing({
+            onoffScreenSharing: onoffScreenSharing
+          }))
+          storePlugin.send({ message: {audio: onoffAudio, video: true}, jsep: jsep });
+        },
+        error: function (error) {
+          Janus.error("WebRTC error:", error);
+        }
+      });
+    } else {
+        if (!Janus.isExtensionEnabled()) {
+          Janus.log("화면 공유를 위한 크롬 확장 프로그램이 설치되어 있지 않습니다. 다음 링크에서 설치해주세요. <b><a href='https://chrome.google.com/webstore/detail/janus-webrtc-screensharin/hapfgfdkleiggjjpfpenajgdnfckjpaj' target='_blank'>링크</a></b>");
+          return;
+        }
+
+        storePlugin.createOffer({
+          media: {
+            replaceVideo: true
+          },
+          success: function (jsep) {
+            dispatch(toggleScreenSharing({
+              onoffScreenSharing: onoffScreenSharing
+            }))
+            storePlugin.send({ message: {audio: onoffAudio, video: true}, jsep: jsep });
+          },
+          error: function (error) {
+            Janus.error("WebRTC error:", error);
+          }
+        });
+    }
+  }
 
   return (
     <>
@@ -457,11 +499,14 @@ const VideoComponent = (props) => {
             <Chatting plugin={storePlugin} myroom={myroom} username={username} />
             <PublishVideo username={username} />
             <SubscribeVideo />
-            <button onClick={handleAudioActiveClick}>
+            <button onClick={toggleAudioHandler}>
               {onoffAudio ? "소리 끄기" : "소리 켜기"}
             </button>
-            <button onClick={handleVideoActiveClick}>
+            <button onClick={toggleVideoHandler}>
               {onoffVideo ? "비디오 끄기" : "비디오 켜기"}
+            </button>
+            <button onClick={toggleScreenSharingHandler}>
+              {onoffScreenSharing ? "화면공유 켜기" : "화면공유 끄기"}
             </button>
         </div>
     </>
