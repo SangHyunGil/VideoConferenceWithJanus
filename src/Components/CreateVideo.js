@@ -16,17 +16,9 @@ const CreateVideo = () => {
             publishers: 10
         }
 
-        let message = {
-            janus: "message_plugin",
-            plugin: "janus.plugin.videoroom",
-            transaction: Math.random().toString(36).substr(2,11),
-            admin_secret: admin_secret,
-            request: request
-          }
-
-          createRoom(message)
-            .then(response => { console.log("Create Room Success")})
-            .catch(error => console.log(error));
+        createRoom(request)
+        .then(response => { console.log("Create Room Success", response)})
+        .catch(error => console.log(error));
     }
 
     return (
