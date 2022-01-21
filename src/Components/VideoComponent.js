@@ -1,6 +1,6 @@
 import Janus from "../utils/janus";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import hark from "hark";
 import { getRoomInfo, joinRoom, removeSubscriber,
    subscribeFeed, addPublishStream, addSubscribeStream,
@@ -9,11 +9,12 @@ import PublishVideo from "./PublishVideo";
 import SubscribeVideo from "./SubscribeVideo";
 import Chatting from "./Chatting";
 import moment from "moment";
+import { server } from "../utils/config"
 
 let myroom = 5678; // demo room
 let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
-let myserver = "http://" + window.location.hostname + ":8088/janus";
+let myserver = server;
 
 const VideoComponent = (props) => {
   const dispatch = useDispatch();
