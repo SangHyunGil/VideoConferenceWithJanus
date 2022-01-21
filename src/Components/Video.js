@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import "./Video.css";
 const Video = (props) => {
   const videoRef = useRef();
@@ -10,6 +10,7 @@ const Video = (props) => {
 
   const onClick = (e) => {
     e.preventDefault();
+    console.log(props.username);
     if (!props.onClick) return;
     props.onClick(videoRef.current.srcObject, props.username);
   };
@@ -24,6 +25,7 @@ const Video = (props) => {
           playsInline
           ref={videoRef}
           muted={props.muted}
+          onClick={onClick}
         />
       </div>
       <div>{props.username}</div>

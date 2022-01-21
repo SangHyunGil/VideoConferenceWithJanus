@@ -8,6 +8,7 @@ import { getRoomInfo, joinRoom, removeSubscriber,
 import PublishVideo from "./PublishVideo";
 import SubscribeVideo from "./SubscribeVideo";
 import Chatting from "./Chatting";
+import MainVideo from "./MainVideo";
 import moment from "moment";
 import { server } from "../utils/config";
 import { useParams } from "react-router-dom";
@@ -20,7 +21,7 @@ const VideoComponent = () => {
   const dispatch = useDispatch();
   const {publishFeed, subscribeFeeds,
          onoffVideo, onoffAudio, onoffScreenSharing,
-         chatData} = useSelector((state) => state.roomReducer);
+         chatData, mainFeed} = useSelector((state) => state.roomReducer);
   let { roomId } = useParams();
   roomId = Number(roomId);
 
@@ -105,6 +106,7 @@ const VideoComponent = () => {
                         dispatch(joinRoom({
                           room: msg["room"],
                           publisherId: msg["id"],
+                          display: username,
                           publisherPvtId: msg["private_id"]
                         }))
 
@@ -500,7 +502,8 @@ const VideoComponent = () => {
             }}
           >
             <Chatting plugin={storePlugin} roomId={roomId} username={username} />
-            <PublishVideo username={username} />
+            <MainVideo />
+            <PublishVideo />
             <SubscribeVideo />
             <button onClick={toggleAudioHandler}>
               {onoffAudio ? "소리 끄기" : "소리 켜기"}

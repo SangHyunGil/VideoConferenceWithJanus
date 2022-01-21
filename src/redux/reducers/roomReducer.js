@@ -12,7 +12,8 @@ const initialState = {
     onoffScreenSharing: false,
     publishFeed: {},
     subscribeFeeds: [],
-    chatData: []
+    chatData: [],
+    mainFeed: {stream: null, display: null}
 }
 
 // action
@@ -28,6 +29,7 @@ export const TOGGLE_AUDIO = "TOGGLE_AUDIO";
 export const SEND_CHAT = "SEND_CHAT";
 export const RECEIVE_CHAT = "RECEIVE_CHAT";
 export const TOGGLE_SCREEN_SHARING = "TOGGLE_SCREEN_SHARING";
+export const CHANGE_MAIN_FEED = "CHANGE_MAIN_FEED";
 
 // actionCreator
 export const getRoomInfo = (payload) => ({
@@ -90,6 +92,11 @@ export const toggleScreenSharing = (payload) => ({
     payload
 });
 
+export const changeMainFeed = (payload) => ({
+    type: CHANGE_MAIN_FEED,
+    payload
+});
+
 // reducer
 const roomReducer = (state = initialState, action) =>
     produce(state, (draft) => {
@@ -101,6 +108,7 @@ const roomReducer = (state = initialState, action) =>
             case JOIN_ROOM:
                 draft.room = action.payload.room;
                 draft.publishFeed.id = action.payload.publisherId;
+                draft.publishFeed.display = action.payload.display;
                 draft.publishFeed.pvtId = action.payload.publisherPvtId;
                 break;
 
@@ -144,6 +152,11 @@ const roomReducer = (state = initialState, action) =>
             case RECEIVE_CHAT:
                 draft.chatData.push({ text: action.payload.text, display: action.payload.display,
                                         time: action.payload.time })
+                break;
+
+            case CHANGE_MAIN_FEED:
+                draft.mainFeed.stream = action.payload.stream;
+                draft.mainFeed.display = action.payload.display;
                 break;
 
             default:
