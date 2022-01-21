@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { createRoom } from "../api/Api";
-import { admin_secret } from "../utils/config"
 
-const CreateVideo = () => {
+const CreateRooms = () => {
     const [roomName, setRoomName] = useState("");
 
     const handleChange = (e) => {
@@ -45,4 +44,4 @@ const CreateVideo = () => {
 
 }
 
-export default CreateVideo;
+export default CreateRooms;

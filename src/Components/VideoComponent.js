@@ -9,21 +9,23 @@ import PublishVideo from "./PublishVideo";
 import SubscribeVideo from "./SubscribeVideo";
 import Chatting from "./Chatting";
 import moment from "moment";
-import { server } from "../utils/config"
+import { server } from "../utils/config";
+import { useParams } from "react-router-dom";
 
-let myroom = 5678; // demo room
 let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
 let myserver = server;
 
-const VideoComponent = (props) => {
+const VideoComponent = () => {
   const dispatch = useDispatch();
   const {publishFeed, subscribeFeeds,
          onoffVideo, onoffAudio, onoffScreenSharing,
          chatData} = useSelector((state) => state.roomReducer);
+  let { roomId } = useParams();
+  roomId = Number(roomId);
 
   useEffect(() => {
-    dispatch(getRoomInfo({room: myroom, server: myserver}))
+    dispatch(getRoomInfo({room: roomId, server: myserver}))
   }, [])
 
   useEffect(() => {
@@ -51,10 +53,10 @@ const VideoComponent = (props) => {
                     storePlugin = pluginHandle;
                     Janus.log("Plugin attached! (" + storePlugin.getPlugin() + ", id=" + storePlugin.getId() + ")");
                     Janus.log("  -- This is a publisher/manager");
-                    
+                    Janus.log(roomId);
                     var register = {
                       request: "join",
-                      room: myroom,
+                      room: roomId,
                       ptype: "publisher",
                       display: username
                     };
@@ -273,7 +275,7 @@ const VideoComponent = (props) => {
             // We wait for the plugin to send us an offer
             var subscribe = {
               request: "join",
-              room: myroom,
+              room: roomId,
               ptype: "subscriber",
               feed: id,
               private_id: publishFeed.pvtid
@@ -326,7 +328,7 @@ const VideoComponent = (props) => {
   
                     success: function(jsep) {
                       Janus.debug("Got SDP!", jsep);
-                      var body = { request: "start", room: myroom };
+                      var body = { request: "start", room: roomId };
                       remoteFeed.send({ message: body, jsep: jsep });
                     },
                     error: function(error) {
@@ -497,7 +499,7 @@ const VideoComponent = (props) => {
               margin: "3px",
             }}
           >
-            <Chatting plugin={storePlugin} myroom={myroom} username={username} />
+            <Chatting plugin={storePlugin} roomId={roomId} username={username} />
             <PublishVideo username={username} />
             <SubscribeVideo />
             <button onClick={toggleAudioHandler}>

@@ -5,7 +5,8 @@ import {BrowserRouter as Router,
   Route} from 'react-router-dom';
 import VideoPage from './Pages/VideoPage';
 import Categories from './Components/Categories';
-import CreateVideo from './Components/CreateVideo';
+import CreateRooms from './Components/CreateRooms';
+import FindRooms from './Components/FindRooms';
 
 function App() {
   return (
@@ -13,8 +14,9 @@ function App() {
       <Router>
           <Categories />
           <Routes>
-            <Route path="/" element={<CreateVideo />} />
-            <Route path="/rooms/:id" element={<VideoPage />} />
+            <Route path="/create" element={<CreateRooms />} />
+            <Route path="/rooms" element={<FindRooms />} />
+            <Route path="/rooms/:roomId" element={<VideoPage />} />
           </Routes>
       </Router>
     </div>

@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
 const category = [
-  { name: "all", title: "방 생성" },
+  { name: "create", title: "방 생성" },
   { name: "rooms", title: "방 조회" }
 ];
 

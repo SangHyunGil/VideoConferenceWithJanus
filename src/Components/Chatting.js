@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { sendChat } from "../redux/reducers/roomReducer";
 import moment from "moment";
 
-const Chatting = ({ plugin, myroom, username }) => {
+const Chatting = ({ plugin, roomId, username }) => {
     const dispatch = useDispatch();
     const [ inputChat, setInputChat] = useState("");
     const { chatData } = useSelector((state) => state.roomReducer);
@@ -15,7 +15,7 @@ const Chatting = ({ plugin, myroom, username }) => {
     const sendChatData = () => {
         let msg = {
           textroom: "message",
-          room: myroom,
+          room: roomId,
           text: inputChat,
           display: username
         }
