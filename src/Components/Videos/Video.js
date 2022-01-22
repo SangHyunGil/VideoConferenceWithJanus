@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import "./Video.css";
+
 const Video = (props) => {
   const videoRef = useRef();
+
   useEffect(() => {
     if (props.stream) {
       videoRef.current.srcObject = props.stream;
@@ -10,7 +12,6 @@ const Video = (props) => {
 
   const onClick = (e) => {
     e.preventDefault();
-    console.log(props.username);
     if (!props.onClick) return;
     props.onClick(videoRef.current.srcObject, props.username);
   };

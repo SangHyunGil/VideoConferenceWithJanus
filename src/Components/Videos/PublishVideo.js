@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import Video from "./Video"
-import { changeMainFeed } from "../redux/reducers/roomReducer";
+import { changeMainFeed } from "../../redux/reducers/roomReducer";
 
 const PublishVideo = () => {
     const dispatch = useDispatch();

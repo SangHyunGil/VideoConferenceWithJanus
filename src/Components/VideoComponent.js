@@ -5,13 +5,15 @@ import hark from "hark";
 import { getRoomInfo, joinRoom, removeSubscriber,
    subscribeFeed, addPublishStream, addSubscribeStream,
    toggleVideo, toggleAudio, receiveChat, toggleScreenSharing} from "../redux/reducers/roomReducer";
-import PublishVideo from "./PublishVideo";
-import SubscribeVideo from "./SubscribeVideo";
+import PublishVideo from "./Videos/PublishVideo";
+import SubscribeVideo from "./Videos/SubscribeVideo";
+import MainVideo from "./Videos/MainVideo";
 import Chatting from "./Chatting";
-import MainVideo from "./MainVideo";
+import Participant from "./Participant";
 import moment from "moment";
 import { server } from "../utils/config";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { destroyRoom } from "../api/Api";
 
 let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
@@ -19,9 +21,10 @@ let myserver = server;
 
 const VideoComponent = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {publishFeed, subscribeFeeds,
          onoffVideo, onoffAudio, onoffScreenSharing,
-         chatData, mainFeed} = useSelector((state) => state.roomReducer);
+         chatData} = useSelector((state) => state.roomReducer);
   let { roomId } = useParams();
   roomId = Number(roomId);
 
@@ -131,9 +134,9 @@ const VideoComponent = () => {
                         }
                       } else if(event === "destroyed") {
                         // 방 삭제
+
                         Janus.warn("The room has been destroyed!");
-                        Janus.log("The room has been destroyed", function() {
-                        });
+                        navigate("/create");
                       } else if(event === "event") {
                         // 새로운 Publisher 접속시
                         if(msg["publishers"]) {
@@ -491,6 +494,12 @@ const VideoComponent = () => {
     }
   }
 
+  const destroyRoomHandler = () => {
+    destroyRoom(roomId)
+      .then(response => Janus.log("destroyed Room!"))
+      .catch(error => Janus.log(error))
+  };
+
   return (
     <>
           <div
@@ -501,6 +510,7 @@ const VideoComponent = () => {
               margin: "3px",
             }}
           >
+            <Participant publishFeed={publishFeed} subscribeFeeds={subscribeFeeds} />
             <Chatting plugin={storePlugin} roomId={roomId} username={username} />
             <MainVideo />
             <PublishVideo />
@@ -513,6 +523,9 @@ const VideoComponent = () => {
             </button>
             <button onClick={toggleScreenSharingHandler}>
               {onoffScreenSharing ? "화면공유 켜기" : "화면공유 끄기"}
+            </button>
+            <button onClick={destroyRoomHandler}>
+              방 종료
             </button>
         </div>
     </>

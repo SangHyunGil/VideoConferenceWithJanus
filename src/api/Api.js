@@ -22,3 +22,16 @@ export const findRooms = async () => {
         }
     });
 }
+
+export const destroyRoom = async (roomId) => {
+    return await axios.post(admin_server, {
+        janus: "message_plugin",
+        plugin: "janus.plugin.videoroom",
+        transaction: Math.random().toString(36).substr(2,11),
+        admin_secret: admin_secret,
+        request: {
+            request: "destroy",
+            room: roomId
+        }
+    });
+}

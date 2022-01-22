@@ -118,6 +118,7 @@ const roomReducer = (state = initialState, action) =>
                 break;
 
             case ADD_PUBLISH_STREAM:
+                console.log(action.payload.stream);
                 draft.publishFeed.stream = action.payload.stream;
                 break;
             
