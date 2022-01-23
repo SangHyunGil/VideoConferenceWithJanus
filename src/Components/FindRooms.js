@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { findRooms } from "../api/Api";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Modal from "./Modal";
 
 const CardWrapper = styled(motion.div)`
   width: 90vw;
@@ -27,7 +28,10 @@ const RoomCard = styled(Card)`
 `;
 
 const FindRooms = () => {
-    const [rooms, setRooms] = useState([])
+    const [rooms, setRooms] = useState([]);
+    const [pin, setPin] = useState("");
+    const [joinRoom, setJoinRoom] = useState(false);
+    const navigate = useNavigate();
 
     // const renderRoomData = rooms.map((room, index) => (
     //     <p key={index}> {room.room} : {room.description}</p>
@@ -43,26 +47,59 @@ const FindRooms = () => {
         .catch(error => console.log(error));
     }, [])
 
+    const openModal = (room) => {
+      setJoinRoom(room);
+    }
+
+    const closeModal = () => {
+      setJoinRoom(false);
+    };
+    
+    const changePinHandler = (e) => {
+      setPin(e.target.value);
+    }
+
+    const joinRoomHandler = (room) => {
+      navigate("/rooms/"+room.room);
+    }
+
+    const joinRoomWithPWHandler = (room, pin) => {
+      navigate("/rooms/"+room.room+"?pin="+pin);
+    }
+
     return (
         <>
         <div>
         <CardWrapper>
           {rooms?.map((room) => {
             return (
-              <CardLink
+              <div
                 style={{ textDecoration: "none" }}
-                to={{ pathname: `/rooms/${room.room}` }}
                 key={room.room}
+                onClick={room.pin_required ? () => openModal(room) : () => joinRoomHandler(room)}
               >
                 <RoomCard>
                   <CardContent>
                     <h2>{room.description}</h2>
                   </CardContent>
                 </RoomCard>
-              </CardLink>
+              </div>
             );
           })}
         </CardWrapper>
+        <Modal open={joinRoom} close={closeModal} header="비밀번호 입력">
+          <div style = {{ display: "flex", justifyContent: "center" }}>
+            <p>
+              비밀번호　
+            </p>
+            <input
+                type="text"
+                value={pin}
+                onChange={changePinHandler}
+            />
+            <button onClick={() => joinRoomWithPWHandler(joinRoom, pin)}>입장</button>
+          </div>
+        </Modal>  
         </div>
         {/* <div
             style={{display: "flex",

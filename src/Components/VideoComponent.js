@@ -26,7 +26,10 @@ const VideoComponent = () => {
   const {publishFeed, subscribeFeeds,
          onoffVideo, onoffAudio, onoffScreenSharing,
          chatData} = useSelector((state) => state.roomReducer);
+  const params = new URLSearchParams(window.location.search);
+  let pin = params.get("pin");
   let { roomId } = useParams();
+
   roomId = Number(roomId);
 
   useEffect(() => {
@@ -54,12 +57,22 @@ const VideoComponent = () => {
                     storePlugin = pluginHandle;
                     Janus.log("Plugin attached! (" + storePlugin.getPlugin() + ", id=" + storePlugin.getId() + ")");
                     Janus.log("  -- This is a publisher/manager");
-                    var register = {
-                      request: "join",
-                      room: roomId,
-                      ptype: "publisher",
-                      display: username
-                    };
+                    if (pin) {
+                      var register = {
+                        request: "join",
+                        room: roomId,
+                        ptype: "publisher",
+                        display: username,
+                        pin: pin
+                      };
+                    } else {
+                      var register = {
+                        request: "join",
+                        room: roomId,
+                        ptype: "publisher",
+                        display: username
+                      };
+                    }
 
                     storePlugin.send({ message: register });
                   },
@@ -167,7 +180,11 @@ const VideoComponent = () => {
                             rfid: unpublished
                           }))
                         } else if(msg["error"]) {
-                          if(msg["error_code"] === 426) {
+                          if(msg["error_code"] === 433) {
+                            navigate("/rooms");
+                            alert(`잘못된 비밀번호입니다!`);
+
+                          } else if(msg["error_code"] === 426){
                             // This is a "no such room" error: give a more meaningful description
 
                           } else {

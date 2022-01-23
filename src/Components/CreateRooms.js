@@ -15,7 +15,7 @@ const CreateRooms = () => {
 
     const createRoomHandler = () => {
         let request = null;
-        if (pin != "") {
+        if (pin === "") {
             request = {
                 request: "create",
                 description: roomName,
@@ -31,8 +31,8 @@ const CreateRooms = () => {
         }
 
         createRoom(request)
-        .then(response => { console.log("Create Room Success", response)})
-        .catch(error => console.log(error));
+            .then(response => { console.log("Create Room Success", response)})
+            .catch(error => console.log(error));
     }
 
     return (
@@ -51,6 +51,9 @@ const CreateRooms = () => {
                 style={{ marginLeft: "10px",
                          marginRight: "10px" }}
             />
+            <p>
+                방 비밀번호 
+            </p>
             <input
                 type="text"
                 value={pin}
@@ -58,7 +61,7 @@ const CreateRooms = () => {
                 style={{ marginLeft: "10px",
                          marginRight: "10px" }}
             />
-            <button onClick={createRoomHandler}>전송</button>
+            <button onClick={createRoomHandler}>생성</button>
           </div>
         </>
       );
