@@ -3,16 +3,31 @@ import { createRoom } from "../api/Api";
 
 const CreateRooms = () => {
     const [roomName, setRoomName] = useState("");
+    const [pin, setPin] = useState("");
 
-    const handleChange = (e) => {
+    const changeRoomNameHandler = (e) => {
         setRoomName(e.target.value);
     }
 
+    const changePinHandler = (e) => {
+        setPin(e.target.value);
+    }
+
     const createRoomHandler = () => {
-        let request = {
-            request: "create",
-            description: roomName,
-            publishers: 10
+        let request = null;
+        if (pin != "") {
+            request = {
+                request: "create",
+                description: roomName,
+                publishers: 10
+            }
+        } else {
+            request = {
+                request: "create",
+                description: roomName,
+                pin: pin,
+                publishers: 10
+            }
         }
 
         createRoom(request)
@@ -32,7 +47,14 @@ const CreateRooms = () => {
             <input
                 type="text"
                 value={roomName}
-                onChange={handleChange}
+                onChange={changeRoomNameHandler}
+                style={{ marginLeft: "10px",
+                         marginRight: "10px" }}
+            />
+            <input
+                type="text"
+                value={pin}
+                onChange={changePinHandler}
                 style={{ marginLeft: "10px",
                          marginRight: "10px" }}
             />

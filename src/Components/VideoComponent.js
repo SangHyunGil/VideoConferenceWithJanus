@@ -365,14 +365,24 @@ const VideoComponent = () => {
         ondata: function (data) {
           let json = JSON.parse(data);
           let what = json["textroom"];
-          
           if (what === "message") {
-            // public message
-            dispatch(receiveChat({
-              display: json["display"],
-              text: json["text"],
-              time: moment().format("HH:mm")
-            }));
+            let whisper = json["to"];
+            console.log(whisper, username);
+            if (whisper) {
+              if (whisper === username) {
+                dispatch(receiveChat({
+                  display: json["display"],
+                  text: json["text"],
+                  time: moment().format("HH:mm")
+                }));
+              }
+            } else {
+              dispatch(receiveChat({
+                display: json["display"],
+                text: json["text"],
+                time: moment().format("HH:mm")
+              }));
+            }
           } else if (what === "file") {
             // let from = json["display"];
             // let filename = json["text"]["filename"];
@@ -416,7 +426,6 @@ const VideoComponent = () => {
   }, [])
 
   useEffect(() => {
-    console.log(chatData);
   }, [subscribeFeeds, chatData])
 
   const toggleAudioHandler = () => {

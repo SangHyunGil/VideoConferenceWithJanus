@@ -5,35 +5,62 @@ import moment from "moment";
 
 const Chatting = ({ plugin, roomId, username }) => {
     const dispatch = useDispatch();
-    const [ inputChat, setInputChat] = useState("");
-    const { chatData } = useSelector((state) => state.roomReducer);
+    const [inputChat, setInputChat] = useState("");
+    const [privateTo, setPrivateTo] = useState(null);
+    const { chatData, subscribeFeeds } = useSelector((state) => state.roomReducer);
 
     const renderChatData = chatData.map((chat, index) => (
         <p key={index}> {chat.display} : {chat.text} [ {chat.time} ]</p>
     ));
 
     const sendChatData = () => {
-        let msg = {
-          textroom: "message",
-          room: roomId,
-          text: inputChat,
-          display: username
-        }
-
-        plugin.data({
-          text: JSON.stringify(msg),
-          success: function () {
-            dispatch(sendChat({
-              text: inputChat,
-              display: username,
-              time: moment().format("HH:mm")
-            }))
-            console.log("Data Channel Message Sent");
-          },
-          error: function (err) {
-            console.log(err);
+      console.log(privateTo);
+        if (privateTo != "false") {
+          let msg = {
+            textroom: "message",
+            room: roomId,
+            text: inputChat+" [private]",
+            to: privateTo,
+            display: username
           }
-        })
+
+          plugin.data({
+            text: JSON.stringify(msg),
+            success: function () {
+              dispatch(sendChat({
+                text: inputChat+" [private]",
+                display: username,
+                time: moment().format("HH:mm")
+              }))
+              console.log("Data Channel Message Sent");
+            },
+            error: function (err) {
+              console.log(err);
+            }
+          })
+        } else {
+          let msg = {
+            textroom: "message",
+            room: roomId,
+            text: inputChat,
+            display: username
+          }
+
+          plugin.data({
+            text: JSON.stringify(msg),
+            success: function () {
+              dispatch(sendChat({
+                text: inputChat,
+                display: username,
+                time: moment().format("HH:mm")
+              }))
+              console.log("Data Channel Message Sent");
+            },
+            error: function (err) {
+              console.log(err);
+            }
+          })
+        }
 
         setInputChat("");
       };
@@ -41,6 +68,10 @@ const Chatting = ({ plugin, roomId, username }) => {
     const handleChange = (e) => {
         setInputChat(e.target.value);
     };
+
+    const onChangeHanlder=(e)=>{
+      setPrivateTo(e.target.value);
+    }
 
     return (
         <>
@@ -54,6 +85,12 @@ const Chatting = ({ plugin, roomId, username }) => {
           >
             {renderChatData}
           </div>
+          <select onChange={onChangeHanlder} value={privateTo}>
+            <option value="false">전체</option>
+            {subscribeFeeds.map((item, index)=> (
+                <option key={index} value={item.display}>{item.display}</option>
+            ))}
+          </select>
           <input
             type="text"
             value={inputChat}
