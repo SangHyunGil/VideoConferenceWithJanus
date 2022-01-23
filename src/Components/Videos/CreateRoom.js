@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { createRoom } from "../api/Api";
+import { createRoom } from "../../api/Api";
 
-const CreateRooms = () => {
+const CreateRoom = () => {
     const [roomName, setRoomName] = useState("");
     const [pin, setPin] = useState("");
 
@@ -69,4 +69,4 @@ const CreateRooms = () => {
 
 }
 
-export default CreateRooms;
+export default CreateRoom;

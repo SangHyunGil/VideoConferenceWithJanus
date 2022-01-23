@@ -5,7 +5,6 @@ const Video = (props) => {
   const videoRef = useRef();
 
   useEffect(() => {
-    console.log("video");
     if (props.stream) {
       videoRef.current.srcObject = props.stream;
     }

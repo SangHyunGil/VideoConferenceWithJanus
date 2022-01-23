@@ -1,19 +1,19 @@
-import Janus from "../utils/janus";
+import Janus from "../../utils/janus";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import hark from "hark";
-import { getRoomInfo, joinRoom, removeSubscriber,
+import { joinRoom, removeSubscriber,
    subscribeFeed, addPublishStream, addSubscribeStream,
-   toggleVideo, toggleAudio, receiveChat, toggleScreenSharing, exitRoom, changeMainFeed} from "../redux/reducers/roomReducer";
-import PublishVideo from "./Videos/PublishVideo";
-import SubscribeVideo from "./Videos/SubscribeVideo";
-import MainVideo from "./Videos/MainVideo";
+   toggleVideo, toggleAudio, receiveChat, toggleScreenSharing, exitRoom, changeMainFeed} from "../../redux/reducers/roomReducer";
+import PublishVideo from "./PublishVideo";
+import SubscribeVideo from "./SubscribeVideo";
+import MainVideo from "./MainVideo";
 import Chatting from "./Chatting";
 import Participant from "./Participant";
 import moment from "moment";
-import { server } from "../utils/config";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { destroyRoom } from "../api/Api";
+import { server } from "../../utils/config";
+import { useNavigate, useParams } from "react-router-dom";
+import { destroyRoom } from "../../api/Api";
 
 let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
@@ -183,7 +183,6 @@ const VideoComponent = () => {
                           if(msg["error_code"] === 433) {
                             navigate("/rooms");
                             alert(`잘못된 비밀번호입니다!`);
-
                           } else if(msg["error_code"] === 426){
                             // This is a "no such room" error: give a more meaningful description
 
@@ -509,31 +508,40 @@ const VideoComponent = () => {
 
   return (
     <>
-          <div
-            style={{
-              width: "100%",
-              height: "100px",
-              display: "flex",
-              margin: "3px",
-            }}
-          >
-            <Participant publishFeed={publishFeed} subscribeFeeds={subscribeFeeds} />
-            <Chatting plugin={storePlugin} roomId={roomId} username={username} />
-            <MainVideo />
-            <PublishVideo />
-            <SubscribeVideo />
-            <button onClick={toggleAudioHandler}>
-              {onoffAudio ? "소리 끄기" : "소리 켜기"}
-            </button>
-            <button onClick={toggleVideoHandler}>
-              {onoffVideo ? "비디오 끄기" : "비디오 켜기"}
-            </button>
-            <button onClick={toggleScreenSharingHandler}>
-              {onoffScreenSharing ? "화면공유 켜기" : "화면공유 끄기"}
-            </button>
-            <button onClick={destroyRoomHandler}>
-              방 종료
-            </button>
+      <div>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+          }}
+        >
+          <Participant publishFeed={publishFeed} subscribeFeeds={subscribeFeeds} />
+          <MainVideo />
+          <Chatting plugin={storePlugin} roomId={roomId} username={username} />
+        </div>
+        <div>
+          <button onClick={toggleAudioHandler}>
+            {onoffAudio ? "소리 끄기" : "소리 켜기"}
+          </button>
+          <button onClick={toggleVideoHandler}>
+            {onoffVideo ? "비디오 끄기" : "비디오 켜기"}
+          </button>
+          <button onClick={toggleScreenSharingHandler}>
+            {onoffScreenSharing ? "화면공유 켜기" : "화면공유 끄기"}
+          </button>
+          <button onClick={destroyRoomHandler}>
+            방 종료
+          </button>
+        </div>
+        <div
+          style={{
+            width: "100px",
+            display: "flex",
+            flexDirection: "row"
+          }}>
+        <PublishVideo />
+        <SubscribeVideo />
+        </div>
         </div>
     </>
   )

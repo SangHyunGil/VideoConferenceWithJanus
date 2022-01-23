@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { findRooms } from "../api/Api";
+import { findRooms } from "../../api/Api";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import Modal from "./Modal";
+import Modal from "../Modal/Modal";
 
 const CardWrapper = styled(motion.div)`
   width: 90vw;
@@ -27,7 +27,7 @@ const RoomCard = styled(Card)`
   text-decoration: none;
 `;
 
-const FindRooms = () => {
+const FindRoom = () => {
     const [rooms, setRooms] = useState([]);
     const [pin, setPin] = useState("");
     const [joinRoom, setJoinRoom] = useState(false);
@@ -101,16 +101,10 @@ const FindRooms = () => {
           </div>
         </Modal>  
         </div>
-        {/* <div
-            style={{display: "flex",
-                    justifyContent: "center"}}
-        >
-            {renderRoomData}
-          </div> */}
         </>
       );
 
 
 }
 
-export default FindRooms;
+export default FindRoom;

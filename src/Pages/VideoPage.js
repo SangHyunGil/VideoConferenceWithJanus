@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import VideoComponent from '../Components/VideoComponent'
+import VideoComponent from '../Components/Videos/VideoComponent'
 
 const VideoPage = () => {
     return (

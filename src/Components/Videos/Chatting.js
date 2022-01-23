@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { sendChat } from "../redux/reducers/roomReducer";
+import { sendChat } from "../../redux/reducers/roomReducer";
 import moment from "moment";
 
 const Chatting = ({ plugin, roomId, username }) => {
     const dispatch = useDispatch();
     const [inputChat, setInputChat] = useState("");
-    const [privateTo, setPrivateTo] = useState(null);
+    const [privateTo, setPrivateTo] = useState("false");
     const { chatData, subscribeFeeds } = useSelector((state) => state.roomReducer);
 
     const renderChatData = chatData.map((chat, index) => (
@@ -14,7 +14,6 @@ const Chatting = ({ plugin, roomId, username }) => {
     ));
 
     const sendChatData = () => {
-      console.log(privateTo);
         if (privateTo != "false") {
           let msg = {
             textroom: "message",
@@ -75,29 +74,47 @@ const Chatting = ({ plugin, roomId, username }) => {
 
     return (
         <>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
           <div
             style={{
               width: "400px",
               border: "1px solid",
+              display: "flex",
+              flexDirection: "column-reverse",
               overflow: "auto",
               minHeight: "500px",
             }}
           >
             {renderChatData}
+          
           </div>
-          <select onChange={onChangeHanlder} value={privateTo}>
-            <option value="false">전체</option>
-            {subscribeFeeds.map((item, index)=> (
-                <option key={index} value={item.display}>{item.display}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={inputChat}
-            onChange={handleChange}
-            style={{ border: "1px solid" }}
-          />
-          <button onClick={sendChatData}>전송</button>
+          <div
+              style={{
+                width: "400px",
+                display: "flex"
+              }}
+            >
+              <select onChange={onChangeHanlder} value={privateTo}>
+                <option value="false">전체</option>
+                {subscribeFeeds.map((item, index)=> (
+                    <option key={index} value={item.display}>{item.display}</option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                value={inputChat}
+                onChange={handleChange}
+                style={{ border: "1px solid" }}
+              />
+              <button onClick={sendChatData}>전송</button>
+            </div>
+          </div>
         </>
       );
 }
