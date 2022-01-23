@@ -9,7 +9,7 @@ const Participant = ( { publishFeed, subscribeFeeds } ) => {
             temp.push(subscribeFeed)
         ))
         setPeople(temp);
-    }, [subscribeFeeds])
+    }, [publishFeed, subscribeFeeds])
 
     const renderParticipantData = people.map((person, index) => (
         <p key={index}> {person.display}</p>

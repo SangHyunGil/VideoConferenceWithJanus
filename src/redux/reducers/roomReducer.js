@@ -30,6 +30,7 @@ export const SEND_CHAT = "SEND_CHAT";
 export const RECEIVE_CHAT = "RECEIVE_CHAT";
 export const TOGGLE_SCREEN_SHARING = "TOGGLE_SCREEN_SHARING";
 export const CHANGE_MAIN_FEED = "CHANGE_MAIN_FEED";
+export const EXIT_ROOM = "EXIT_ROOM";
 
 // actionCreator
 export const getRoomInfo = (payload) => ({
@@ -97,6 +98,12 @@ export const changeMainFeed = (payload) => ({
     payload
 });
 
+export const exitRoom = (payload) => ({
+    type: EXIT_ROOM,
+    payload
+});
+
+
 // reducer
 const roomReducer = (state = initialState, action) =>
     produce(state, (draft) => {
@@ -124,8 +131,10 @@ const roomReducer = (state = initialState, action) =>
             
             case ADD_SUBSCRIBER_STREAM:
                 const subscribeFeed = draft.subscribeFeeds.find((feed) => feed.id === action.payload.rfid);
-                subscribeFeed.stream = action.payload.stream;
-                subscribeFeed.hark = action.payload.hark;
+                if (subscribeFeed) {
+                    subscribeFeed.stream = action.payload.stream;
+                    subscribeFeed.hark = action.payload.hark;
+                }
                 break;
 
             case REMOVE_SUBSCRIBER:
@@ -158,6 +167,16 @@ const roomReducer = (state = initialState, action) =>
             case CHANGE_MAIN_FEED:
                 draft.mainFeed.stream = action.payload.stream;
                 draft.mainFeed.display = action.payload.display;
+                break;
+
+            case EXIT_ROOM:
+                draft.onoffVideo = true;
+                draft.onoffAudio = true;
+                draft.onoffScreenSharing = false;
+                draft.publishFeed = {};
+                draft.subscribeFeeds = [];
+                draft.chatData = [];
+                draft.mainFeed = {stream: null, display: null};
                 break;
 
             default:

@@ -1,10 +1,10 @@
 import Janus from "../utils/janus";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import hark from "hark";
 import { getRoomInfo, joinRoom, removeSubscriber,
    subscribeFeed, addPublishStream, addSubscribeStream,
-   toggleVideo, toggleAudio, receiveChat, toggleScreenSharing} from "../redux/reducers/roomReducer";
+   toggleVideo, toggleAudio, receiveChat, toggleScreenSharing, exitRoom, changeMainFeed} from "../redux/reducers/roomReducer";
 import PublishVideo from "./Videos/PublishVideo";
 import SubscribeVideo from "./Videos/SubscribeVideo";
 import MainVideo from "./Videos/MainVideo";
@@ -19,6 +19,7 @@ let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
 let myserver = server;
 
+
 const VideoComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,10 +28,6 @@ const VideoComponent = () => {
          chatData} = useSelector((state) => state.roomReducer);
   let { roomId } = useParams();
   roomId = Number(roomId);
-
-  useEffect(() => {
-    dispatch(getRoomInfo({room: roomId, server: myserver}))
-  }, [])
 
   useEffect(() => {
     let janus = null;
@@ -57,7 +54,6 @@ const VideoComponent = () => {
                     storePlugin = pluginHandle;
                     Janus.log("Plugin attached! (" + storePlugin.getPlugin() + ", id=" + storePlugin.getId() + ")");
                     Janus.log("  -- This is a publisher/manager");
-                    Janus.log(roomId);
                     var register = {
                       request: "join",
                       room: roomId,
@@ -202,7 +198,10 @@ const VideoComponent = () => {
                     dispatch(addPublishStream({
                       stream: stream
                     }))
-
+                    dispatch(changeMainFeed({
+                      stream: stream,
+                      display: username
+                    }))
                     // Video 존재 여부에 따른 처리
                     // var videoTracks = stream.getVideoTracks();
                     // if (!videoTracks || videoTracks.length === 0) {
@@ -265,155 +264,138 @@ const VideoComponent = () => {
       });
     };
   
-    const newRemoteFeed = (id, display, audio, video) => {
+    function newRemoteFeed(id, display, audio, video) {
       // 새로운 피드가 Publish되면, 새로운 피드를 생성해 Subscribe한다.
-      var remoteFeed = null;
-      janus.attach(
-        {
-          plugin: "janus.plugin.videoroom",
-          opaqueId: opaqueId,
-          success: function(pluginHandle) {
-            remoteFeed = pluginHandle;
-            Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
-            Janus.log("  -- This is a subscriber");
-  
-            // We wait for the plugin to send us an offer
-            var subscribe = {
-              request: "join",
-              room: roomId,
-              ptype: "subscriber",
-              feed: id,
-              private_id: publishFeed.pvtid
-            };
-            
-            // Subscribe 메세지를 담아 Plugin에 전송 (Plugin 측에서 Offer를 생성하여 전송해줌)
-            remoteFeed.videoCodec = video;
-            remoteFeed.send({ message: subscribe });
-          },
-          error: function(error) {
-            // 에러 발생시
-            Janus.error("  -- Error attaching plugin...", error);
-          },
-          onmessage: function(msg, jsep) {
-            Janus.debug(" ::: Got a message (subscriber) :::", msg);
-            var event = msg["videoroom"];
-            Janus.debug("Event: " + event);
-            if(msg["error"]) {
-              Janus.error(msg["error"]);
-            } else if(event) {
-              if(event === "attached") {
-                // Subscribe Feed에 remoteFeed를 저장
-                remoteFeed.rfid = msg["id"];
-                remoteFeed.display = msg["display"];
-                dispatch(subscribeFeed({
-                  id: remoteFeed.rfid,
-                  display: remoteFeed.display
-                }))
-                
-                Janus.log("Successfully attached to feed " + remoteFeed.rfid + " (" + remoteFeed.rfdisplay + ") in room " + msg["room"]);
-              } else if(event === "event") {
-              // publisher로부터의 동시캐스트를 사용할 시 사용 (현재 사용 X)
-  
-              }
-              if(jsep) {
-                Janus.log("Handling SDP as well");
-                Janus.debug("Handling SDP as well...", jsep);
-                  
-                // Answer and attach
-                remoteFeed.createAnswer(
-                  {
-                    jsep: jsep,
-  
-                    // Audio와 Video를 보내지 않는다.(전송은 Publisher)
-                    media: { 
-                      data: true,
-                      audioSend: false, 
-                      videoSend: false 
-                    },
-  
-                    success: function(jsep) {
-                      Janus.debug("Got SDP!", jsep);
-                      var body = { request: "start", room: roomId };
-                      remoteFeed.send({ message: body, jsep: jsep });
-                    },
-                    error: function(error) {
-                      Janus.error("WebRTC error:", error);
-                    }
-                  });
-              }
-            }
-          },
-          iceState: function(state) {
-            // ICE 상태 변화시
-            Janus.log("ICE state of this WebRTC PeerConnection (feed #" + remoteFeed.rfindex + ") changed to " + state);
-          },
-          webrtcState: function(on) {
-            // WebRETC PeerConnection 연결시 혹은 중단시
-            Janus.log("Janus says this WebRTC PeerConnection (feed #" + remoteFeed.rfindex + ") is " + (on ? "up" : "down") + " now");
-          },
-          onlocalstream: function(stream) {
-            // Subscriber는 오직 수신만
-          },
-          onremotestream: function(stream) {
-            Janus.debug("Remote feed #" + remoteFeed.rfid + ", stream:", stream);
-            
-            dispatch(addSubscribeStream({
-              rfid: remoteFeed.rfid,
-              stream: stream,
-              hark: hark(stream, {})
-            }))
+      let remoteFeed = null;
+      janus.attach({
+        plugin: "janus.plugin.videoroom",
+        opaqueId: opaqueId,
+        success: function (pluginHandle) {
+          remoteFeed = pluginHandle;
+          Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
+          Janus.log("  -- This is a subscriber");
 
-            // RemoteVideo 존재하는지에 여부에 따라 처리
-            // var videoTracks = stream.getVideoTracks();
-            // if (!videoTracks || videoTracks.length === 0) {
-              
-            // } else {
-  
-            // }
-          },
-          ondataopen: function () {
-            console.log("remote datachannel opened");
-          },
-          ondata: function (data) {
-            let json = JSON.parse(data);
-            let what = json["textroom"];
-            
-            if (what === "message") {
-              // public message
-              dispatch(receiveChat({
-                display: json["display"],
-                text: json["text"],
-                time: moment().format("HH:mm")
+          let subscribe = {
+            request: "join",
+            room: roomId,
+            ptype: "subscriber",
+            feed: id,
+            private_id: publishFeed.pvtid,
+          };
+
+          // Subscribe 메세지를 담아 Plugin에 전송 (Plugin 측에서 Offer를 생성하여 전송해줌)
+          remoteFeed.videoCodec = video;
+          remoteFeed.send({ message: subscribe });
+        },
+        error: function (error) {
+          Janus.error("  -- Error attaching plugin...", error);
+        },
+        onmessage: function (msg, jsep) {
+          Janus.debug(" ::: Got a message (subscriber) :::", msg);
+          var event = msg["videoroom"];
+          Janus.debug("Event: " + event);
+          if (msg["error"]) {
+            console.log(msg["error"]);
+          } else if (event) {
+            if (event === "attached") {
+              remoteFeed.rfid = msg["id"];
+              remoteFeed.rfdisplay = msg["display"];
+              dispatch(subscribeFeed({
+                id: msg["id"],
+                display: msg["display"]
               }));
-            } else if (what === "file") {
-              // let from = json["display"];
-              // let filename = json["text"]["filename"];
-              // let chunk = json["text"]["message"];
-              // let last = json["text"]["last"];
-              // if (!receivedFileChunk[from]) receivedFileChunk[from] = {};
-              // if (!receivedFileChunk[from][filename]) {
-              //   receivedFileChunk[from][filename] = [];
-              // }
-              // receivedFileChunk[from][filename].push(chunk);
-              // if (last) {
-              //   setReceiveFile(() => {
-              //     return {
-              //       data: receivedFileChunk[from][filename].join(""),
-              //       filename: filename,
-              //       from: from,
-              //     };
-              //   });
-              //   delete receivedFileChunk[from][filename];
-              // }
+              Janus.log("Successfully attached to feed " + remoteFeed.rfid + " (" + remoteFeed.rfdisplay + ") in room " + msg["room"]);
+            } else if (event === "event") {
+              // publisher로부터의 동시캐스트를 사용할 시 사용 (현재 사용 X)
+            } else {
+              // What has just happened?
             }
-          },
-          oncleanup: function() {
-            // 퇴장시 Subscriber Feed에서 제거
-            dispatch({
-              rfid: remoteFeed.rfid
-            })
           }
-        });
+          if (jsep) {
+            Janus.debug("Handling SDP as well...", jsep);
+            // Answer and attach
+            remoteFeed.createAnswer({
+              jsep: jsep,
+              // Audio와 Video를 보내지 않는다.(전송은 Publisher)
+              media: { 
+                data: true, 
+                audioSend: false, 
+                videoSend: false 
+              }, 
+              success: function (jsep) {
+                Janus.debug("Got SDP!", jsep);
+                var body = { request: "start", room: roomId };
+                remoteFeed.send({ message: body, jsep: jsep });
+              },
+              error: function (error) {
+                Janus.error("WebRTC error:", error);
+              },
+            });
+          }
+        },
+        iceState: function (state) {
+          // ICE 상태 변화시
+          Janus.log("ICE state of this WebRTC PeerConnection (feed #" + remoteFeed.rfindex + ") changed to " + state);
+        },
+        webrtcState: function (on) {
+          // WebRETC PeerConnection 연결시 혹은 중단시
+          Janus.log("Janus says this WebRTC PeerConnection (feed #" + remoteFeed.rfindex + ") is " + (on ? "up" : "down") + " now");
+        },
+        onlocalstream: function (stream) {
+          // Subscriber는 오직 수신만
+        },
+        onremotestream: function (stream) {
+          Janus.debug("Remote feed #" + remoteFeed.rfid + ", stream:", stream);
+
+          dispatch(addSubscribeStream({
+            rfid: remoteFeed.rfid,
+            stream: stream,
+            hark: hark(stream, {})
+          }))
+        },
+        oncleanup: function () {
+          // 퇴장시 Subscriber Feed에서 제거
+          dispatch(removeSubscriber({
+            rfid: remoteFeed.rfid
+          }))
+        },
+        ondataopen: function () {
+          console.log("remote datachannel opened");
+        },
+        ondata: function (data) {
+          let json = JSON.parse(data);
+          let what = json["textroom"];
+          
+          if (what === "message") {
+            // public message
+            dispatch(receiveChat({
+              display: json["display"],
+              text: json["text"],
+              time: moment().format("HH:mm")
+            }));
+          } else if (what === "file") {
+            // let from = json["display"];
+            // let filename = json["text"]["filename"];
+            // let chunk = json["text"]["message"];
+            // let last = json["text"]["last"];
+            // if (!receivedFileChunk[from]) receivedFileChunk[from] = {};
+            // if (!receivedFileChunk[from][filename]) {
+            //   receivedFileChunk[from][filename] = [];
+            // }
+            // receivedFileChunk[from][filename].push(chunk);
+            // if (last) {
+            //   setReceiveFile(() => {
+            //     return {
+            //       data: receivedFileChunk[from][filename].join(""),
+            //       filename: filename,
+            //       from: from,
+            //     };
+            //   });
+            //   delete receivedFileChunk[from][filename];
+            // }
+          }
+        }
+      });
     }
 
     return () => {
@@ -425,7 +407,7 @@ const VideoComponent = () => {
         storePlugin.send({
           message: unpublish,
           success: () => {
-            storePlugin.hangup();
+            dispatch(exitRoom());
             janus.destroy()
           }
         })
@@ -455,7 +437,6 @@ const VideoComponent = () => {
 
   const toggleScreenSharingHandler = () => {
     if (onoffScreenSharing) {
-      console.log("scrrrrrrrrrrrr");
       storePlugin.createOffer({
         media: {
           video: "screen",
