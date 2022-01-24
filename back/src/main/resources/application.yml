@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate.default_batch_fetch_size: 1000
+    hibernate:
+      format_sql: true
+      ddl-auto: create
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/video_conference?serverTimezone=Asia/Seoul&charaterEncoding=UTF-8
+    username: videouser
+    password: videouser
+
+janus:
+  server: http://localhost:7088/admin
+  admin:
+    secret: janusoverlord

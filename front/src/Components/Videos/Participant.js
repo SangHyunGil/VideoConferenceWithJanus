@@ -17,12 +17,12 @@ const Participant = ( { publishFeed, subscribeFeeds } ) => {
 
     return (
         <>
-            <div
+          <div
             style={{
-              width: "400px",
+              width: "200px",
               border: "1px solid",
               overflow: "auto",
-              minHeight: "500px",
+              height: "500px",
             }}
           >
             {renderParticipantData}

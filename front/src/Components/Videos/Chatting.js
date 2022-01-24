@@ -82,12 +82,12 @@ const Chatting = ({ plugin, roomId, username }) => {
         >
           <div
             style={{
-              width: "400px",
+              width: "100%",
               border: "1px solid",
               display: "flex",
-              flexDirection: "column-reverse",
-              overflow: "auto",
-              minHeight: "500px",
+              flexDirection: "column",
+              overflow: "scroll",
+              height: "500px",
             }}
           >
             {renderChatData}
@@ -95,7 +95,7 @@ const Chatting = ({ plugin, roomId, username }) => {
           </div>
           <div
               style={{
-                width: "400px",
+                width: "100%",
                 display: "flex"
               }}
             >

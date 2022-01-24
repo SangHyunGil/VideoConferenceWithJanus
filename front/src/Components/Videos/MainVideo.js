@@ -5,7 +5,11 @@ const MainVideo = () => {
     const { mainFeed } = useSelector((state) => state.roomReducer);
 
     return (
-        <div>
+        <div
+          style={{
+            maxHeight: "500px",
+          }}
+        >
             {mainFeed && (
             <Video
               stream={mainFeed.stream}

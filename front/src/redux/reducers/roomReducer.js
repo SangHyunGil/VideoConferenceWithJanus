@@ -114,9 +114,9 @@ const roomReducer = (state = initialState, action) =>
 
             case JOIN_ROOM:
                 draft.room = action.payload.room;
-                draft.publishFeed.id = action.payload.publisherId;
+                draft.publishFeed.id = action.payload.id;
                 draft.publishFeed.display = action.payload.display;
-                draft.publishFeed.pvtId = action.payload.publisherPvtId;
+                draft.publishFeed.pvtid = action.payload.pvtid;
                 break;
 
             case SUBSCRIBE_FEED:
@@ -166,6 +166,10 @@ const roomReducer = (state = initialState, action) =>
             case CHANGE_MAIN_FEED:
                 draft.mainFeed.stream = action.payload.stream;
                 draft.mainFeed.display = action.payload.display;
+                break;
+
+            case TOGGLE_SCREEN_SHARING:
+                draft.onoffScreenSharing = !draft.onoffScreenSharing
                 break;
 
             case EXIT_ROOM:

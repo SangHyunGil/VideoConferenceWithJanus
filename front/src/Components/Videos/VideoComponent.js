@@ -19,7 +19,6 @@ let storePlugin = null;
 let username = "username-" + Janus.randomString(10);
 let myserver = server;
 
-
 const VideoComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,9 +84,9 @@ const VideoComponent = () => {
                     
                     Janus.debug("Consent dialog should be " + (on ? "on" : "off") + " now");
                     if(on) {
-                      // getUserMedia 호출되기 전
+                      // getUserMedia 호출되기 전
                     } else {
-                      // getUserMedia 호출되기 후
+                      // getUserMedia 호출되기 후
                     }
                   },
                   iceState: function(state) {
@@ -99,7 +98,7 @@ const VideoComponent = () => {
                     Janus.log("Janus " + (on ? "started" : "stopped") + " receiving our " + medium);
                   },
                   webrtcState: function(on) {
-                    // ICE, DTLS를 포함한 모든 것이 성공하여 PeerConnection이 활성화 => true
+                    // ICE, DTLS를 포함한 모든 것이 성공하여 PeerConnection이 활성화 => true
                     //PeerConnection이 죽는다면 파라미터가 false
                     Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
                     if(!on) {
@@ -143,7 +142,6 @@ const VideoComponent = () => {
                         }
                       } else if(event === "destroyed") {
                         // 방 삭제
-
                         Janus.warn("The room has been destroyed!");
                         navigate("/create");
                       } else if(event === "event") {
@@ -291,13 +289,25 @@ const VideoComponent = () => {
           Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
           Janus.log("  -- This is a subscriber");
 
-          let subscribe = {
-            request: "join",
-            room: roomId,
-            ptype: "subscriber",
-            feed: id,
-            private_id: publishFeed.pvtid,
-          };
+          let subscribe = null;
+          if (pin) {
+            subscribe = {
+              request: "join",
+              room: roomId,
+              ptype: "subscriber",
+              feed: id,
+              pin: pin,
+              private_id: publishFeed.pvtid,
+            };
+          } else {
+            subscribe = {
+              request: "join",
+              room: roomId,
+              ptype: "subscriber",
+              feed: id,
+              private_id: publishFeed.pvtid,
+            };
+          } 
 
           // Subscribe 메세지를 담아 Plugin에 전송 (Plugin 측에서 Offer를 생성하여 전송해줌)
           remoteFeed.videoCodec = video;
@@ -511,15 +521,18 @@ const VideoComponent = () => {
       <div>
         <div
           style={{
-            width: "100%",
             display: "flex",
+            justifyContent: "center"
           }}
         >
           <Participant publishFeed={publishFeed} subscribeFeeds={subscribeFeeds} />
           <MainVideo />
           <Chatting plugin={storePlugin} roomId={roomId} username={username} />
         </div>
-        <div>
+        <div style={{
+          width: "500px",
+          margin: "0 auto"
+        }}>
           <button onClick={toggleAudioHandler}>
             {onoffAudio ? "소리 끄기" : "소리 켜기"}
           </button>
@@ -542,7 +555,7 @@ const VideoComponent = () => {
         <PublishVideo />
         <SubscribeVideo />
         </div>
-        </div>
+      </div>
     </>
   )
 };
