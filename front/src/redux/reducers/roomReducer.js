@@ -4,7 +4,7 @@ import { act } from "react-dom/cjs/react-dom-test-utils.production.min";
 // initailState
 const initialState = {
     room: "",
-    server: "",
+    creator: "",
     useAudio: true,
     useVideo: true,
     onoffVideo: true,
@@ -109,7 +109,8 @@ const roomReducer = (state = initialState, action) =>
     produce(state, (draft) => {
         switch (action.type) {
             case GET_ROOM_INFO:
-                draft.server = action.payload.server;
+                draft.room = action.payload.room;
+                draft.creator = action.payload.creator;
                 break;
 
             case JOIN_ROOM:

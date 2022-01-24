@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 public class FindRoomResponseDto {
     private Long number;
     private String description;
-    private String pin;
+    private Boolean hasPin;
     private String username;
 
     public static FindRoomResponseDto create(Room room) {
         return new FindRoomResponseDto(room.getNumber(), room.getDescription(),
-                room.getPin(), room.getUsername());
+                room.getPin() != null, room.getUsername());
     }
 }

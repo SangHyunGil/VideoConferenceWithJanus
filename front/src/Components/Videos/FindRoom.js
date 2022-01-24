@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Modal from "../Modal/Modal";
+import { useDispatch } from "react-redux";
+import { getRoomInfo } from "../../redux/reducers/roomReducer";
 
 const CardWrapper = styled(motion.div)`
   width: 90vw;
@@ -28,6 +30,8 @@ const RoomCard = styled(Card)`
 `;
 
 const FindRoom = () => {
+    const dispatch = useDispatch();
+    const [username, setUsername] = useState("");
     const [rooms, setRooms] = useState([]);
     const [pin, setPin] = useState("");
     const [joinRoom, setJoinRoom] = useState(false);
@@ -40,8 +44,8 @@ const FindRoom = () => {
     useEffect(() => {
         findRooms()
         .then(response => {
-            const {data: {response: {list}}} = response
-            list.map((room) => (
+            const {data: {data}} = response;
+            data.map((room) => (
                 setRooms((prev) => [...prev, room]))
             )})
         .catch(error => console.log(error));
@@ -54,33 +58,53 @@ const FindRoom = () => {
     const closeModal = () => {
       setJoinRoom(false);
     };
+
+    const changeUsernameHandler = (e) => {
+      setUsername(e.target.value);
+    }
     
     const changePinHandler = (e) => {
       setPin(e.target.value);
     }
 
     const joinRoomHandler = (room) => {
-      navigate("/rooms/"+room.room);
+      dispatch(getRoomInfo({
+        room: room.number,
+        creator: room.username
+      }))
+      navigate("/rooms/"+room.number+"?username="+username);
     }
 
     const joinRoomWithPWHandler = (room, pin) => {
-      navigate("/rooms/"+room.room+"?pin="+pin);
+      dispatch(getRoomInfo({
+        room: room.number,
+        creator: room.username
+      }))
+      navigate("/rooms/"+room.number+"?pin="+pin+"&username="+username);
     }
 
     return (
         <>
         <div>
+        <input
+                type="text"
+                value={username}
+                onChange={changeUsernameHandler}
+                style={{ marginLeft: "10px",
+                         marginRight: "10px" }}
+        />
         <CardWrapper>
           {rooms?.map((room) => {
             return (
               <div
                 style={{ textDecoration: "none" }}
-                key={room.room}
-                onClick={room.pin_required ? () => openModal(room) : () => joinRoomHandler(room)}
+                key={room.number}
+                onClick={room.hasPin ? () => openModal(room) : () => joinRoomHandler(room)}
               >
                 <RoomCard>
                   <CardContent>
                     <h2>{room.description}</h2>
+                    <h2>{room.username}</h2>
                   </CardContent>
                 </RoomCard>
               </div>

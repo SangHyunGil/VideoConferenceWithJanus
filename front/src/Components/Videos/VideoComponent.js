@@ -16,7 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { destroyRoom } from "../../api/Api";
 
 let storePlugin = null;
-let username = "username-" + Janus.randomString(10);
+let username = null;
 let myserver = server;
 
 const VideoComponent = () => {
@@ -24,11 +24,11 @@ const VideoComponent = () => {
   const navigate = useNavigate();
   const {publishFeed, subscribeFeeds,
          onoffVideo, onoffAudio, onoffScreenSharing,
-         chatData} = useSelector((state) => state.roomReducer);
+         chatData, creator} = useSelector((state) => state.roomReducer);
   const params = new URLSearchParams(window.location.search);
   let pin = params.get("pin");
   let { roomId } = useParams();
-
+  username = params.get("username");
   roomId = Number(roomId);
 
   useEffect(() => {
@@ -542,9 +542,9 @@ const VideoComponent = () => {
           <button onClick={toggleScreenSharingHandler}>
             {onoffScreenSharing ? "화면공유 켜기" : "화면공유 끄기"}
           </button>
-          <button onClick={destroyRoomHandler}>
+          { creator === username ? <button onClick={destroyRoomHandler}>
             방 종료
-          </button>
+          </button> : null}
         </div>
         <div
           style={{

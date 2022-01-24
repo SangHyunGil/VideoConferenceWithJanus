@@ -4,10 +4,12 @@ import com.example.VideoConference.response.Response;
 import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
 import com.example.VideoConference.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
