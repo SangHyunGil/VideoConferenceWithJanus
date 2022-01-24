@@ -28,4 +28,14 @@ class RoomRepositoryTest {
         //when, then
         Assertions.assertNotNull(roomRepository.findByNumber(9797L));
     }
+
+    @Test
+    @DisplayName("모든 방을 조회한다.")
+    public void findRooms() throws Exception {
+        //given
+
+        //when, then
+        Assertions.assertEquals(1, roomRepository.findAll().size());
+
+    }
 }

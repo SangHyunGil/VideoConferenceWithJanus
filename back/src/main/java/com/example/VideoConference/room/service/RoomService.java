@@ -6,6 +6,7 @@ import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
 import com.example.VideoConference.room.dto.request.DestroyRoomRequestDto;
 import com.example.VideoConference.room.dto.response.CreateRoomResponseDto;
 import com.example.VideoConference.room.dto.response.DestroyRoomResponseDto;
+import com.example.VideoConference.room.dto.response.FindRoomResponseDto;
 import com.example.VideoConference.room.dto.result.CreateRoomResultDto;
 import com.example.VideoConference.room.dto.result.DestroyRoomResultDto;
 import com.example.VideoConference.exception.JanusRequestException;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -72,9 +75,17 @@ public class RoomService {
                 .build();
     }
 
+    @Transactional
     public DestroyRoomResponseDto destroyRoom(Long roomId) {
         DestroyRoomRequestDto requestDto = DestroyRoomRequestDto.create(roomId);
         DestroyRoomResultDto resultDto = postAndGetResponseDto(requestDto, DestroyRoomResultDto.class);
         return DestroyRoomResponseDto.create(resultDto);
+    }
+
+    public List<FindRoomResponseDto> findRooms() {
+        List<Room> rooms = roomRepository.findAll();
+        return rooms.stream()
+                .map(FindRoomResponseDto::create)
+                .collect(Collectors.toList());
     }
 }

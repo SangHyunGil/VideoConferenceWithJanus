@@ -13,6 +13,11 @@ import javax.validation.Valid;
 public class RoomController {
     private final RoomService roomService;
 
+    @GetMapping("/rooms")
+    public Response createRoom() {
+        return Response.success(roomService.findRooms());
+    }
+
     @PostMapping("/rooms")
     public Response createRoom(@Valid @RequestBody CreateRoomRequestDto requestDto) {
         return Response.success(roomService.createRoom(requestDto));
