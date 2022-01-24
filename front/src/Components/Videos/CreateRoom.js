@@ -2,11 +2,16 @@ import { useState } from "react";
 import { createRoom } from "../../api/Api";
 
 const CreateRoom = () => {
-    const [roomName, setRoomName] = useState("");
+    const [username, setUsername] = useState("");
+    const [roomname, setRoomname] = useState("");
     const [pin, setPin] = useState("");
 
-    const changeRoomNameHandler = (e) => {
-        setRoomName(e.target.value);
+    const changeUsernameHandler = (e) => {
+        setUsername(e.target.value);
+    }
+
+    const changeRoomnameHandler = (e) => {
+        setRoomname(e.target.value);
     }
 
     const changePinHandler = (e) => {
@@ -18,15 +23,15 @@ const CreateRoom = () => {
         if (pin === "") {
             request = {
                 request: "create",
-                description: roomName,
-                publishers: 10
+                description: roomname,
+                username: username
             }
         } else {
             request = {
                 request: "create",
-                description: roomName,
+                description: roomname,
                 pin: pin,
-                publishers: 10
+                username: username
             }
         }
 
@@ -42,12 +47,22 @@ const CreateRoom = () => {
                     justifyContent: "center"}}
         >
             <p>
+                유저 이름 
+            </p>
+            <input
+                type="text"
+                value={username}
+                onChange={changeUsernameHandler}
+                style={{ marginLeft: "10px",
+                         marginRight: "10px" }}
+            />
+            <p>
                 방 제목 
             </p>
             <input
                 type="text"
-                value={roomName}
-                onChange={changeRoomNameHandler}
+                value={roomname}
+                onChange={changeRoomnameHandler}
                 style={{ marginLeft: "10px",
                          marginRight: "10px" }}
             />

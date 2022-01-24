@@ -36,6 +36,7 @@ public class RoomService {
     @Value("${janus.admin.secret}")
     private String adminSecret;
 
+    @Transactional
     public CreateRoomResponseDto createRoom(CreateRoomRequestDto requestDto) {
         CreateRoomResultDto resultDto = postAndGetResponseDto(requestDto, CreateRoomResultDto.class);
         Room room = roomRepository.save(makeRoom(requestDto, resultDto));

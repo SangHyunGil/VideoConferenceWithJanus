@@ -11,10 +11,6 @@ public class Response {
     private int code;
     private Result result;
 
-    public static Response success() {
-        return new Response(true, 200, null);
-    }
-
     public static <T> Response success(T data) {
         return new Response(true, 200, new Success<>(data));
     }
