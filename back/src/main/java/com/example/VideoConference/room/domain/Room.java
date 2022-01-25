@@ -1,6 +1,7 @@
 package com.example.VideoConference.room.domain;
 
 import com.example.VideoConference.common.EntityDate;
+import com.example.VideoConference.room.dto.request.EditRoomRequestDto;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -27,5 +28,11 @@ public class Room extends EntityDate {
         this.description = description;
         this.pin = pin;
         this.username = username;
+    }
+
+    public Room edit(EditRoomRequestDto requestDto) {
+        this.description = requestDto.getDescription();
+        this.pin = requestDto.getPin();
+        return this;
     }
 }

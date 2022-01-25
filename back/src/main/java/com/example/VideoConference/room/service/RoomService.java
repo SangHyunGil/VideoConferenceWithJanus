@@ -1,14 +1,18 @@
 package com.example.VideoConference.room.service;
 
 import com.example.VideoConference.common.JanusHelper;
+import com.example.VideoConference.exception.RoomNotFoundException;
 import com.example.VideoConference.room.domain.Room;
 import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
 import com.example.VideoConference.room.dto.request.DestroyRoomRequestDto;
+import com.example.VideoConference.room.dto.request.EditRoomRequestDto;
 import com.example.VideoConference.room.dto.response.CreateRoomResponseDto;
 import com.example.VideoConference.room.dto.response.DestroyRoomResponseDto;
+import com.example.VideoConference.room.dto.response.EditRoomResponseDto;
 import com.example.VideoConference.room.dto.response.FindRoomResponseDto;
 import com.example.VideoConference.room.dto.result.CreateRoomResultDto;
 import com.example.VideoConference.room.dto.result.DestroyRoomResultDto;
+import com.example.VideoConference.room.dto.result.EditRoomResultDto;
 import com.example.VideoConference.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +44,13 @@ public class RoomService {
                 .pin(requestDto.getPin())
                 .username(requestDto.getUsername())
                 .build();
+    }
+
+    @Transactional
+    public EditRoomResponseDto editRoom(EditRoomRequestDto requestDto) {
+        janusHelper.postAndGetResponseDto(requestDto, EditRoomResultDto.class);
+        Room room = roomRepository.findByNumber(requestDto.getNumber()).orElseThrow(RoomNotFoundException::new);
+        return EditRoomResponseDto.create(room.edit(requestDto));
     }
 
     @Transactional

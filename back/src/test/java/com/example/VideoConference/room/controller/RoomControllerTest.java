@@ -1,6 +1,6 @@
 package com.example.VideoConference.room.controller;
 
-import com.example.VideoConference.room.domain.Room;
+import com.example.VideoConference.RoomTestCaseFactory;
 import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
 import com.example.VideoConference.room.dto.response.CreateRoomResponseDto;
 import com.example.VideoConference.room.service.RoomService;
@@ -37,7 +37,7 @@ class RoomControllerTest {
     @DisplayName("방을 생성한다.")
     public void createRoom() throws Exception {
         //given
-        CreateRoomRequestDto requestDto = new CreateRoomRequestDto("create", "백엔드 스터디 회의1", "1234", "상현");
+        CreateRoomRequestDto requestDto = RoomTestCaseFactory.createRoomRequestDto();
 
         //when, then
         mockMvc.perform(post("/rooms")
@@ -50,7 +50,7 @@ class RoomControllerTest {
     @DisplayName("방을 삭제한다.")
     public void destroyRoom() throws Exception {
         //given
-        CreateRoomRequestDto requestDto = new CreateRoomRequestDto("create", "백엔드 스터디 회의1", "1234", "상현");
+        CreateRoomRequestDto requestDto = RoomTestCaseFactory.createRoomRequestDto();
         CreateRoomResponseDto responseDto = roomService.createRoom(requestDto);
 
         //when, then
