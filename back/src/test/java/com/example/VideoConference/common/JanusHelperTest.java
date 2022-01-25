@@ -35,8 +35,8 @@ class JanusHelperTest {
     public void editPost() throws Exception {
         //given
         CreateRoomRequestDto createRequestDto = RoomTestCaseFactory.createRoomRequestDto();
-        CreateRoomResultDto createResultDto = janusHelper.postAndGetResponseDto(createRequestDto, CreateRoomResultDto.class);
-        EditRoomRequestDto editRequestDto = RoomTestCaseFactory.editRoomRequestDto(createResultDto.getResponse().getRoom());
+        janusHelper.postAndGetResponseDto(createRequestDto, CreateRoomResultDto.class);
+        EditRoomRequestDto editRequestDto = RoomTestCaseFactory.editRoomRequestDto();
 
         //when
         EditRoomResultDto editResultDto = janusHelper.postAndGetResponseDto(editRequestDto, EditRoomResultDto.class);

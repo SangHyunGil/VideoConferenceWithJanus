@@ -44,10 +44,10 @@ class RoomServiceTest {
         //given
         CreateRoomRequestDto createRequestDto = RoomTestCaseFactory.createRoomRequestDto();
         CreateRoomResponseDto room = roomService.createRoom(createRequestDto);
-        EditRoomRequestDto editRequestDto = RoomTestCaseFactory.editRoomRequestDto(room.getNumber());
+        EditRoomRequestDto editRequestDto = RoomTestCaseFactory.editRoomRequestDto();
 
         //when
-        EditRoomResponseDto responseDto = roomService.editRoom(editRequestDto);
+        EditRoomResponseDto responseDto = roomService.editRoom(room.getNumber(), editRequestDto);
 
         //then
         Assertions.assertEquals("제목 수정", responseDto.getDescription());

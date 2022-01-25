@@ -47,15 +47,15 @@ public class RoomService {
     }
 
     @Transactional
-    public EditRoomResponseDto editRoom(EditRoomRequestDto requestDto) {
+    public EditRoomResponseDto editRoom(Long number, EditRoomRequestDto requestDto) {
         janusHelper.postAndGetResponseDto(requestDto, EditRoomResultDto.class);
-        Room room = roomRepository.findByNumber(requestDto.getNumber()).orElseThrow(RoomNotFoundException::new);
+        Room room = roomRepository.findByNumber(number).orElseThrow(RoomNotFoundException::new);
         return EditRoomResponseDto.create(room.edit(requestDto));
     }
 
     @Transactional
-    public DestroyRoomResponseDto destroyRoom(Long roomId) {
-        DestroyRoomRequestDto requestDto = DestroyRoomRequestDto.create(roomId);
+    public DestroyRoomResponseDto destroyRoom(Long number) {
+        DestroyRoomRequestDto requestDto = DestroyRoomRequestDto.create(number);
         DestroyRoomResultDto resultDto = janusHelper.postAndGetResponseDto(requestDto, DestroyRoomResultDto.class);
         return DestroyRoomResponseDto.create(resultDto);
     }

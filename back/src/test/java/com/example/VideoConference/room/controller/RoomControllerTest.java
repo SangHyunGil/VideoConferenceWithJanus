@@ -2,6 +2,7 @@ package com.example.VideoConference.room.controller;
 
 import com.example.VideoConference.RoomTestCaseFactory;
 import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
+import com.example.VideoConference.room.dto.request.EditRoomRequestDto;
 import com.example.VideoConference.room.dto.response.CreateRoomResponseDto;
 import com.example.VideoConference.room.service.RoomService;
 import com.google.gson.Gson;
@@ -44,6 +45,21 @@ class RoomControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(requestDto)))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("방을 삭제한다.")
+    public void editRoom() throws Exception {
+        //given
+        CreateRoomRequestDto createRequestDto = RoomTestCaseFactory.createRoomRequestDto();
+        CreateRoomResponseDto responseDto = roomService.createRoom(createRequestDto);
+        EditRoomRequestDto editRequestDto = RoomTestCaseFactory.editRoomRequestDto();
+
+        //when, then
+        mockMvc.perform(put("/rooms/"+responseDto.getNumber())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new Gson().toJson(editRequestDto)))
+                .andExpect(status().isOk());
     }
 
     @Test

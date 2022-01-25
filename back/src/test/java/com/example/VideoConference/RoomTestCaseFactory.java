@@ -10,8 +10,8 @@ public class RoomTestCaseFactory {
         return new CreateRoomRequestDto("create", "제목", "11", "상현");
     }
 
-    public static EditRoomRequestDto editRoomRequestDto(Long number) {
-        return new EditRoomRequestDto("edit", number, "제목 수정", "22");
+    public static EditRoomRequestDto editRoomRequestDto() {
+        return new EditRoomRequestDto("edit", "제목 수정", "22");
     }
 
     public static DestroyRoomRequestDto destroyRoomRequestDto(Long number) {

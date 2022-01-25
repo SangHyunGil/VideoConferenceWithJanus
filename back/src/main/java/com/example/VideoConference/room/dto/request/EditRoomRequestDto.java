@@ -13,8 +13,6 @@ import javax.validation.constraints.Size;
 public class EditRoomRequestDto {
     @NotBlank(message = "요청 구분을 입력해주세요.")
     private String request;
-    @NotBlank(message = "방 번호를 입력해주세요.")
-    private Long number;
     @NotBlank(message = "방 제목을 입력해주세요.")
     @Size(min=2, message = "방 제목이 너무 짧습니다.")
     private String description;

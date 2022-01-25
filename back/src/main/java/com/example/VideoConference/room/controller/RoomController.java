@@ -2,6 +2,7 @@ package com.example.VideoConference.room.controller;
 
 import com.example.VideoConference.response.Response;
 import com.example.VideoConference.room.dto.request.CreateRoomRequestDto;
+import com.example.VideoConference.room.dto.request.EditRoomRequestDto;
 import com.example.VideoConference.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping("/rooms")
-    public Response createRoom() {
+    public Response findRooms() {
         return Response.success(roomService.findRooms());
     }
 
@@ -25,8 +26,13 @@ public class RoomController {
         return Response.success(roomService.createRoom(requestDto));
     }
 
-    @DeleteMapping("/rooms/{roomId}")
-    public Response createRoom(@PathVariable Long roomId) {
-        return Response.success(roomService.destroyRoom(roomId));
+    @PutMapping("/rooms/{number}")
+    public Response editRoom(@PathVariable Long number, @Valid @RequestBody EditRoomRequestDto requestDto) {
+        return Response.success(roomService.editRoom(number, requestDto));
+    }
+
+    @DeleteMapping("/rooms/{number}")
+    public Response destroyRoom(@PathVariable Long number) {
+        return Response.success(roomService.destroyRoom(number));
     }
 }
