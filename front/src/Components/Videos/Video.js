@@ -27,6 +27,7 @@ const Video = (props) => {
           ref={videoRef}
           muted={props.muted}
           onClick={onClick}
+          controls = {props.isMain ? true : false}
         />
       </div>
       <div>{props.username}</div>

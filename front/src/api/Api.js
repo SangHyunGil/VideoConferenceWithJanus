@@ -12,6 +12,5 @@ export const findRooms = async () => {
 }
 
 export const destroyRoom = async (roomId) => {
-    console.log("")
     return await axios.delete(spring_server+"/rooms/"+roomId);
 }

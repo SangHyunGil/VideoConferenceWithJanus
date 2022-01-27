@@ -27,7 +27,9 @@ const SubscribeVideo = () => {
     ));
 
     return (
-        <div>
+        <div 
+          style={{display: "flex"}}
+        >
             {renderRemoteVideos}
         </div>
     )
