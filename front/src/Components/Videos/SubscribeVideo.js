@@ -15,23 +15,19 @@ const SubscribeVideo = () => {
     }
 
     const renderRemoteVideos = subscribeFeeds.map((feed, idx) => (
-      <div>
-      <Video
-        key = {idx}
-        stream={feed.stream}
-        username={feed.display}
-        muted={false}
-        onClick={changeMainFeedHandler}
-      />
-    </div>
+        <Video
+          key = {idx}
+          stream={feed.stream}
+          username={feed.display}
+          muted={false}
+          onClick={changeMainFeedHandler}
+        />
     ));
 
     return (
-        <div 
-          style={{display: "flex"}}
-        >
-            {renderRemoteVideos}
-        </div>
+      <>
+        {renderRemoteVideos}
+      </>
     )
 }
 

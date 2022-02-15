@@ -2,7 +2,6 @@
   "name": "front",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
@@ -17,6 +16,7 @@
     "framer-motion": "4.1.17",
     "git": "^0.1.5",
     "hark": "^1.2.3",
+    "http-proxy-middleware": "^2.0.3",
     "immer": "^9.0.12",
     "install": "^0.13.0",
     "jquery": "^3.6.0",
@@ -35,7 +35,7 @@
     "webrtc-adapter": "^8.1.1"
   },
   "scripts": {
-    "start": "cross-env HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

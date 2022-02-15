@@ -156,12 +156,12 @@ const roomReducer = (state = initialState, action) =>
 
             case SEND_CHAT:
                 draft.chatData.push({ text: action.payload.text, display: action.payload.display,
-                                      time: action.payload.time })
+                                      time: action.payload.time, isPrivateMessage: action.payload.isPrivateMessage });
                 break;
 
             case RECEIVE_CHAT:
                 draft.chatData.push({ text: action.payload.text, display: action.payload.display,
-                                        time: action.payload.time })
+                                        time: action.payload.time, isPrivateMessage: action.payload.isPrivateMessage });
                 break;
 
             case CHANGE_MAIN_FEED:

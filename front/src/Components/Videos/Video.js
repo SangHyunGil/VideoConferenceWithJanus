@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import "./Video.css";
+import styled from "styled-components";
+
+const VideoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const Video = (props) => {
   const videoRef = useRef();
@@ -17,7 +23,7 @@ const Video = (props) => {
   };
 
   return (
-    <>
+    <VideoWrapper>
       <div>
         <video
           id="video"
@@ -31,7 +37,7 @@ const Video = (props) => {
         />
       </div>
       <div>{props.username}</div>
-    </>
+    </VideoWrapper>
   );
 };
 

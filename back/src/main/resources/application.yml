@@ -11,14 +11,14 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/video_conference?serverTimezone=Asia/Seoul&charaterEncoding=UTF-8
-    username: videouser
-    password: videouser
+    url: jdbc:mysql://localhost:3308/video_conference?serverTimezone=Asia/Seoul&charaterEncoding=UTF-8
+    username: user1
+    password: vmfhwprxm
 
   domain:
-    https://localhost:3000
+    http://localhost:3000
 
 janus:
-  server: http://localhost:7088/admin
+  server: http://3.37.190.27:7088/admin
   admin:
     secret: janusoverlord

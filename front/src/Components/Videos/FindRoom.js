@@ -12,12 +12,16 @@ import { getRoomInfo } from "../../redux/reducers/roomReducer";
 const CardWrapper = styled(motion.div)`
   width: 90vw;
   display: grid;
-  grid-template-columns: repeat(6, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, auto));
   grid-gap: 10px;
   justify-items: center;
   margin: 0 auto;
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(4, 1fr);
+  & > div {
+    tex-decoration: none;
+    width: 100%;
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;
 
@@ -27,6 +31,9 @@ const CardLink = styled(Link)`
 
 const RoomCard = styled(Card)`
   text-decoration: none;
+  &:hover {
+    background-color: rgb(203 227 251);
+  }
 `;
 
 const FindRoom = () => {
@@ -97,14 +104,13 @@ const FindRoom = () => {
           {rooms?.map((room) => {
             return (
               <div
-                style={{ textDecoration: "none" }}
                 key={room.number}
                 onClick={room.hasPin ? () => openModal(room) : () => joinRoomHandler(room)}
               >
                 <RoomCard>
                   <CardContent>
                     <h2>{room.description}</h2>
-                    <h2>{room.username}</h2>
+                    <p>{room.username}</p>
                   </CardContent>
                 </RoomCard>
               </div>

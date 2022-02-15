@@ -1,6 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import Video from "./Video"
 import { changeMainFeed } from "../../redux/reducers/roomReducer";
+import styled from "styled-components";
+
+const CurrentVideoWrapper = styled.div`
+  
+`;
 
 const PublishVideo = () => {
     const dispatch = useDispatch();
@@ -15,7 +20,7 @@ const PublishVideo = () => {
     }
 
     return (
-        <div>
+        <CurrentVideoWrapper>
             {publishFeed && (
             <Video
               stream={publishFeed.stream}
@@ -24,7 +29,7 @@ const PublishVideo = () => {
               onClick={changeMainFeedHandler}
             />
           )}
-        </div>
+        </CurrentVideoWrapper>
     )
 }
 

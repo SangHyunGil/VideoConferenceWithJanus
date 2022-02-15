@@ -1,15 +1,17 @@
 import { useSelector } from "react-redux";
 import Video from "./Video"
+import styled from "styled-components";
+
+const VideoWrapper = styled.div`
+  flex-basis: 55%;
+  max-width: 60%;
+`;
 
 const MainVideo = () => {
     const { mainFeed } = useSelector((state) => state.roomReducer);
 
     return (
-        <div
-          style={{
-            maxHeight: "500px",
-          }}
-        >
+        <VideoWrapper>
             {mainFeed && (
             <Video
               stream={mainFeed.stream}
@@ -18,7 +20,7 @@ const MainVideo = () => {
               isMain={true}
             />
           )}
-        </div>
+        </VideoWrapper>
     )
 }
 
